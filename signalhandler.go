@@ -11,7 +11,7 @@ import (
 type SignalHandler struct {
 	signalChannel chan os.Signal
 	callbacks     map[os.Signal][]func() error
-	outputFunc    func(string)
+	outputFunc    func(v ...interface{})
 }
 
 // ConstructSignalHandler will create a new SignalHandler
@@ -24,7 +24,7 @@ func ConstructSignalHandler() *SignalHandler {
 }
 
 // SetOutput will set the output function used to print errors should they occurr
-func (handler *SignalHandler) SetOutput(outputFunction func(string)) {
+func (handler *SignalHandler) SetOutput(outputFunction func(v ...interface{})) {
 	handler.outputFunc = outputFunction
 }
 
@@ -42,7 +42,7 @@ func (handler *SignalHandler) Listen() {
 			err := signalFunction()
 
 			if err != nil {
-				outputFunc(fmt.Sprintf("SignalHandler: error during signal %d func: %v", receivedSignal, err))
+				handler.outputFunc(fmt.Sprintf("SignalHandler: error during signal %d func: %v", receivedSignal, err))
 			}
 		}
 	}
